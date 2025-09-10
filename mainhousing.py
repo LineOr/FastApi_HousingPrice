@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import joblib
 import numpy as np
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 
 #Chargement du modèle au démarrage de l'application
@@ -29,7 +30,23 @@ class Housing(BaseModel):
 
 
 #Initialisation de l'application FastAPI
-app = FastAPI() 
+
+
+app = FastAPI()
+
+origins = [
+    "http://localhost:5500",
+    "https://frontend-housingprice.onrender.com",
+    # Ajoutez d'autres origines autorisées si nécessaire
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/predict")
 def predict_housing(housing_data: Housing):
